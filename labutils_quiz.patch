@@ -1,0 +1,12 @@
+--- a/labutils.py
++++ b/labutils.py
+@@ -2719,6 +2719,9 @@
+         fname = os.path.join('./', os.path.basename(count_path))
+         zipoutput.write(fname, compress_type=zipfile.ZIP_DEFLATED)
+     os.chdir(mycwd)
++    # Add quiz responses (if they exist) to the zip file
++    for quiz_path in glob.glob(os.path.join('.tmp', labname, '*.quiz.json')):
++        zipoutput.write(quiz_path, os.path.basename(quiz_path), compress_type=zipfile.ZIP_DEFLATED)
+     my_labtainer_log = os.path.join('./', 'labtainer.log')
+     if os.path.exists(my_labtainer_log):
+         zipoutput.write(my_labtainer_log, compress_type=zipfile.ZIP_DEFLATED)

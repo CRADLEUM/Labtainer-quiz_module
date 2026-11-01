@@ -1,0 +1,723 @@
+<title>Labtainer Quiz Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a lab manual with a section rail beside one reading column, and a language switch in the top bar. */
+:root {
+  --bg: #f6f8f7; --surface: #ffffff; --fg: #17262b; --muted: #55686e; --line: #d5dfdd;
+  --accent: #0b6e6e; --accent-soft: #dcefec; --code-bg: #14262b; --code-fg: #dcebe7; --code-dim: #8fb0ab;
+  --warn: #8a5300; --warn-soft: #fbeed8;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #101b1e; --surface: #16252a; --fg: #e3eeeb; --muted: #9db2af; --line: #2b3f44;
+  --accent: #5fd0c3; --accent-soft: #173b3c; --code-bg: #0b1518; --code-fg: #dcebe7; --code-dim: #8fb0ab;
+  --warn: #f2bd6b; --warn-soft: #3a2b12; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #101b1e; --surface: #16252a; --fg: #e3eeeb; --muted: #9db2af; --line: #2b3f44;
+  --accent: #5fd0c3; --accent-soft: #173b3c; --code-bg: #0b1518; --code-fg: #dcebe7; --code-dim: #8fb0ab;
+  --warn: #f2bd6b; --warn-soft: #3a2b12; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.6 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.bar-in { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.brand { font: 700 18px/1.2 var(--display); }
+.langs { display: flex; gap: 4px; }
+.langs button { font: 600 14px var(--body); color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
+.langs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.page { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 48px; padding-block: 36px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.rail { position: sticky; top: 76px; align-self: start; max-height: calc(100vh - 96px); overflow-y: auto; font-size: 15px; }
+.rail a { display: block; padding: 4px 0; color: var(--muted); text-decoration: none; }
+.rail a:hover { color: var(--accent); }
+main { min-width: 0; max-width: 760px; }
+h1 { font: 700 clamp(30px, 5vw, 42px)/1.12 var(--display); margin: 0 0 12px; text-wrap: balance; }
+h2 { font: 700 26px/1.2 var(--display); margin: 52px 0 12px; padding-top: 14px; border-top: 1px solid var(--line); scroll-margin-top: 70px; text-wrap: balance; }
+h3 { font: 600 19px/1.3 var(--display); margin: 28px 0 8px; scroll-margin-top: 70px; }
+.lead { font-size: 19px; color: var(--muted); margin: 0 0 8px; }
+p { margin: 10px 0; } ul, ol { margin: 10px 0; padding-left: 24px; } li { margin: 5px 0; }
+a { color: var(--accent); }
+code { font: 400 0.88em var(--mono); background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.code { position: relative; margin: 12px 0; }
+pre { margin: 0; background: var(--code-bg); color: var(--code-fg); padding: 14px 16px; border-radius: 8px; overflow-x: auto; font: 400 14px/1.55 var(--mono); }
+pre code { background: none; padding: 0; font: inherit; overflow-wrap: normal; }
+.copy { position: absolute; top: 7px; right: 7px; font: 600 12px var(--body); color: var(--code-dim); background: var(--code-bg); border: 1px solid var(--code-dim); border-radius: 5px; padding: 2px 8px; cursor: pointer; }
+.table { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 15.5px; }
+th { text-align: left; font-weight: 700; border-bottom: 2px solid var(--line); padding: 7px 12px 7px 0; vertical-align: bottom; }
+td { border-bottom: 1px solid var(--line); padding: 7px 12px 7px 0; vertical-align: top; }
+.note { background: var(--warn-soft); color: var(--fg); padding: 11px 14px; border-radius: 8px; margin: 14px 0; }
+.note strong { color: var(--warn); }
+@media (max-width: 860px) {
+  .page { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 22px 56px; }
+  .rail { position: static; max-height: none; columns: 2; column-gap: 16px; }
+  .rail a { break-inside: avoid; }
+  body { font-size: 16px; }
+}
+</style>
+
+<div class="bar"><div class="bar-in">
+  <div class="brand">Labtainer Quiz</div>
+  <div class="langs" role="group" aria-label="Language">
+    <button type="button" id="btn-tr" data-lang="tr" aria-pressed="true">Türkçe</button>
+    <button type="button" id="btn-en" data-lang="en" aria-pressed="false">English</button>
+  </div>
+</div></div>
+
+<!-- ============================== TÜRKÇE ============================== -->
+<div class="page" id="lang-tr" lang="tr">
+<nav class="rail" aria-label="İçindekiler">
+  <a href="#tr-genel">Genel bakış</a>
+  <a href="#tr-kurulum">Kurulum</a>
+  <a href="#tr-guncelleme">Güncellemeler</a>
+  <a href="#tr-ekleme">Laba quiz ekleme</a>
+  <a href="#tr-coklu">Birden fazla quiz</a>
+  <a href="#tr-format">Dosya formatı</a>
+  <a href="#tr-tipler">Soru tipleri</a>
+  <a href="#tr-onkosul">Önkoşullar</a>
+  <a href="#tr-ogrenci">Quiz çalıştırma</a>
+  <a href="#tr-kayit">Cevap kaydı</a>
+  <a href="#tr-egitmen">Eğitmen işlemleri</a>
+  <a href="#tr-sunucu">Çok kullanıcılı sunucu</a>
+  <a href="#tr-hatalar">Hata mesajları</a>
+  <a href="#tr-sinirlar">Sınırlar</a>
+</nav>
+<main>
+<h1>Labtainer Quiz Kılavuzu</h1>
+<p class="lead">Lab geliştiricileri ve eğitmenler için quiz ekleme, çalıştırma, cevapları toplama ve sanal makine paketinin kurulum rehberi.</p>
+
+<h2 id="tr-genel">Genel bakış</h2>
+<p>Quiz, bir labın kendi <code>config</code> klasöründe duran düz metin dosyasıdır. Ayrı bir paket gerekmez, image yeniden derlenmez. Dosya laba konduğu anda <code>quiz</code> komutu onu bulur.</p>
+<p>Quiz öğrencinin Linux terminalinde çalışır, lab container'larının içinde değil. Bu yüzden lab çalışmıyorken de açılabilir.</p>
+<div class="table"><table>
+<tr><th>Özellik</th><th>Orijinal Labtainer</th><th>Quiz modülü ile</th></tr>
+<tr><td>Bilgi metni (<code>Preface</code>)</td><td>Var</td><td>Var</td></tr>
+<tr><td>Doğru/yanlış (<code>TrueFalse</code>)</td><td>Var</td><td>Var</td></tr>
+<tr><td>Çoktan seçmeli (<code>MultipleChoice</code>)</td><td>Yok</td><td>Var, notlanır</td></tr>
+<tr><td>Anket (<code>Survey</code>)</td><td>Yok</td><td>Var, notlanmaz</td></tr>
+<tr><td>Cevapların kaydı</td><td>Yok</td><td>Her deneme kaydedilir</td></tr>
+<tr><td>Cevapların <code>.lab</code> dosyasına girmesi</td><td>Yok</td><td><code>stoplab</code> ekler</td></tr>
+</table></div>
+<h3>Kim ne yapar</h3>
+<div class="table"><table>
+<tr><th>Rol</th><th>Yapılacak</th><th>Modül gerekli mi</th></tr>
+<tr><td>Lab geliştiricisi</td><td><code>.quiz</code> dosyasını yazar, laba ekler, sonuna kadar dener</td><td>Evet</td></tr>
+<tr><td>Öğrenci</td><td>Quiz'i çalıştırır, labı <code>stoplab</code> ile durdurur, <code>.lab</code> dosyasını gönderir</td><td>Evet, yeni tipler ve kayıt için</td></tr>
+<tr><td>Eğitmen</td><td><code>.lab</code> dosyalarını toplar, notlandırır, cevapları okur</td><td>Hayır, <code>gradelab</code> değişmeden çalışır</td></tr>
+</table></div>
+
+<h2 id="tr-kurulum">Kurulum (sanal makine paketi)</h2>
+<p>Paket, kendi sanal makinesinde Labtainer kullananlar içindir. Dosya adı <code>labtainer-quiz.tar.gz</code>.</p>
+<ol>
+<li>Paketi sanal makineye kopyalayın. Paylaşılan klasör, <code>scp</code> veya tarayıcıdan indirme olabilir.</li>
+<li>Labtainer'ı çalıştıran kullanıcıyla aşağıdaki komutları çalıştırın. <code>sudo</code> kullanmayın.</li>
+</ol>
+<div class="code"><pre><code>tar xzf labtainer-quiz.tar.gz
+cd labtainer-quiz
+./install.sh</code></pre></div>
+<p>Başarılı kurulumda <code>Quiz module installed in ...</code> yazar. Çalışan bir lab varsa önce <code>stoplab</code> ile durdurun.</p>
+<p>Kurulum programı Labtainer'ı <code>LABTAINER_DIR</code> değişkeninden, o yoksa <code>~/labtainer/trunk</code> altından bulur. Başka bir konum için:</p>
+<div class="code"><pre><code>LABTAINER_DIR=/baska/yol/labtainer/trunk ./install.sh</code></pre></div>
+<h3>Pakette ne var</h3>
+<div class="table"><table>
+<tr><th>Dosya</th><th>Görevi</th></tr>
+<tr><td><code>install.sh</code></td><td>Kurar, tekrar uygular ve kaldırır</td></tr>
+<tr><td><code>quiz</code></td><td>Yeni quiz programı, Labtainer'ın <code>quiz</code> dosyasının yerini alır</td></tr>
+<tr><td><code>labutils_quiz.patch</code></td><td><code>labutils.py</code> içine, cevapları <code>.lab</code> dosyasına ekleyen üç satır koyar</td></tr>
+<tr><td><code>README.md</code></td><td>Kısa İngilizce kullanım notu</td></tr>
+</table></div>
+<h3>Sistemde ne değişir</h3>
+<p>Yalnızca <code>trunk/scripts/labtainer-student/bin</code> altındaki iki dosya değişir: <code>quiz</code> ve <code>labutils.py</code>. Yedekleri aynı klasörde <code>.quiz_backup</code> içinde durur. Kurulu olduğunu şu komutla görebilirsiniz, sonuç <code>1</code> olmalı:</p>
+<div class="code"><pre><code>grep -c 'quiz.json' ~/labtainer/trunk/scripts/labtainer-student/bin/labutils.py</code></pre></div>
+<p><code>patch</code> komutu yoksa kurulum durur ve kurulum komutunu söyler, dosyalara dokunmaz:</p>
+<div class="code"><pre><code>sudo apt-get install patch</code></pre></div>
+<h3>Kaldırma</h3>
+<div class="code"><pre><code>./install.sh --uninstall</code></pre></div>
+<p>Komutu paket klasöründe çalıştırın, yani paketi silmeyin. Orijinal dosyalar geri gelir. Kayıtlı cevaplar ve <code>.quiz</code> dosyaları silinmez. Yeni tipleri kullanan quiz'ler orijinal programda <code>MultipleChoice</code> ve <code>Survey</code> sorularını sessizce atlar.</p>
+
+<h2 id="tr-guncelleme">Her güncellemede ne olur</h2>
+<p><strong>Kural: her <code>update-labtainer.sh</code> çalıştırmasından sonra paket klasöründe <code>./install.sh</code> çalıştırın.</strong> Bir şey değişmemişse zararsızdır.</p>
+<div class="code"><pre><code>cd ~/labtainer/labtainer-student
+update-labtainer.sh
+cd ~/labtainer-quiz
+./install.sh</code></pre></div>
+<p><code>update-labtainer.sh</code> yeni sürümü <code>tar --keep-newer-files</code> ile açar. Yani diskteki dosya sürümdeki kopyadan yeniyse dokunmaz, eskiyse üzerine yazar. <code>install.sh</code> değiştirdiği dosyaların orijinal tarihini korur, böylece güncelleme sürümdeki yeni dosyaları normal şekilde alır.</p>
+<div class="table"><table>
+<tr><th>Güncellemede ne oluyor</th><th>Sonuç</th><th>Yapılacak</th></tr>
+<tr><td>Sürümde <code>labutils.py</code> veya <code>quiz</code> daha yeni</td><td>Yeni sürüm yerine geçer, modülün o parçası gider</td><td><code>./install.sh</code> yeniden uygular</td></tr>
+<tr><td>Bu iki dosya sürümde değişmemiş</td><td>Modül yerinde kalır</td><td><code>./install.sh</code> bir şey değiştirmez</td></tr>
+<tr><td>Kendi adınızla eklediğiniz <code>.quiz</code></td><td>Kalır</td><td>Yok</td></tr>
+<tr><td>Labtainer ile gelen bir <code>.quiz</code> dosyasını düzenlediniz</td><td>Dosyanız sürümdekinden yeniyse kalır, eskiyse üzerine yazılır</td><td>Değişiklikleri kendi adınızla ayrı bir dosyada tutun</td></tr>
+<tr><td>Kayıtlı cevaplar ve <code>.lab</code> dosyaları</td><td>Dokunulmaz</td><td>Yok</td></tr>
+</table></div>
+<div class="note"><strong>Dikkat:</strong> Güncellemeden sonra <code>./install.sh</code> çalıştırılmazsa ve <code>quiz</code> değişmişse yeni tipler çalışmaz. <code>labutils.py</code> değişmişse quiz yine çalışır, ama cevaplar <code>.lab</code> dosyasına girmez ve bu hiçbir hata vermez.</div>
+<h3>Yama reddedilirse</h3>
+<p><code>This version of labutils.py does not accept the patch, nothing was changed.</code> mesajı, yeni Labtainer sürümünün yamanın dokunduğu kodu değiştirdiği anlamına gelir. Hiçbir dosya değişmez, sistem orijinal haliyle çalışır. Bu durumda yeni sürüme uygun bir paket gerekir.</p>
+<h3>Yeni paket sürümü</h3>
+<p>Yeni paket yalnızca <code>quiz</code> programını değiştiriyorsa açıp <code>./install.sh</code> çalıştırmak yeterlidir. <code>labutils_quiz.patch</code> de değiştiyse önce eski paketin klasöründe <code>./install.sh --uninstall</code>, sonra yeni paketle <code>./install.sh</code> çalıştırın.</p>
+
+<h2 id="tr-ekleme">Laba quiz ekleme</h2>
+<ol>
+<li>Labın <code>config</code> klasörüne <code>.quiz</code> uzantılı bir dosya oluşturun. Dosya adı quiz'in adıdır, boşluk kullanmayın.</li>
+<li>Soruları <a href="#tr-format">dosya formatına</a> göre yazın.</li>
+<li>Quiz'i sonuna kadar çözerek deneyin.</li>
+<li>Lab kılavuzuna quiz'in ne zaman ve hangi komutla yapılacağını yazın.</li>
+</ol>
+<div class="code"><pre><code>~/labtainer/trunk/labs/telnetlab/config/telnet.quiz</code></pre></div>
+<p>Kısa bir başlangıç örneği:</p>
+<div class="code"><pre><code># telnetlab hazırlık quiz'i
+0, Preface, "Bu quiz labdan önce kendinizi kontrol etmeniz içindir."
+1, MultipleChoice, "Telnet varsayılan olarak hangi portu kullanır?", B,
+   "Doğru.", "Yanlış, telnet 23 kullanır.", "",
+   "22", "23", "80", "443"
+2, TrueFalse, "Telnet trafiği düz metin olarak gider.", T, "", ""
+3, Survey, "Bu lab ne kadar zordu?", "", "Kolay", "Orta", "Zor"
+4, Survey, "Neyi iyileştirirdiniz?", ""</code></pre></div>
+<div class="note"><strong>Sonuna kadar deneyin:</strong> Dosya soru soruldukça okunur. Hatalı bir soru, ancak sıra ona geldiğinde quiz'i durdurur ve o deneme kaydedilmez. Önkoşullu soruları görmek için bir kez de yanlış cevaplayarak deneyin.</div>
+<p>Hazır örnekler <code>db-access</code>, <code>dmz-lab</code>, <code>dns</code> ve <code>iptables2</code> lablarının <code>config</code> klasörlerinde bulunur.</p>
+
+<h2 id="tr-coklu">Bir laba birden fazla quiz</h2>
+<p>Aynı <code>config</code> klasörüne birden fazla <code>.quiz</code> dosyası koymanız yeterlidir. Sayı sınırı yoktur.</p>
+<div class="code"><pre><code>labs/telnetlab/config/pre.quiz
+labs/telnetlab/config/post.quiz
+labs/telnetlab/config/survey.quiz</code></pre></div>
+<p>Bu durumda düz <code>quiz</code> komutu soru sormaz, seçenekleri listeler:</p>
+<div class="code"><pre><code>Multiple quizzes for this lab.  Pick one with the -q option: post pre survey</code></pre></div>
+<p>Öğrenci adı <code>.quiz</code> uzantısı olmadan verir:</p>
+<div class="code"><pre><code>quiz -q pre</code></pre></div>
+<p>Her quiz'in kendi kayıt dosyası olur (<code>pre.quiz.json</code>, <code>post.quiz.json</code>) ve <code>stoplab</code> hepsini <code>.lab</code> dosyasına ekler. Quiz'ler birbirine bağlanamaz: önkoşullar yalnızca aynı dosyadaki soruları görür ve quiz'lerin sırasını program zorlamaz. Sırayı lab kılavuzunda belirtin.</p>
+
+<h2 id="tr-format">Dosya formatı</h2>
+<p>Her soru virgülle ayrılmış bir kayıttır. İlk iki alan her zaman kimlik ve tiptir.</p>
+<div class="table"><table>
+<tr><th>Kural</th><th>Ayrıntı</th></tr>
+<tr><td>Kodlama</td><td>BOM'suz UTF-8. Türkçe karakterler desteklenir. BOM'lu dosyada ilk satır bozulur, Windows Not Defteri'nde dikkat edin. CRLF satır sonları sorun değildir.</td></tr>
+<tr><td>Yorum</td><td><code>#</code> ile başlayan satır atlanır, çok satırlı sorunun ortasında da olabilir.</td></tr>
+<tr><td>Soru alt satıra geçiş</td><td>Satır <code>,</code> ile bitiyorsa soru alt satırda devam eder. Satır <code>\</code> ile bitiyorsa metin alt satırla birleşir, böylece uzun bir metin bölünebilir.</td></tr>
+<tr><td>Boş satır</td><td>Kullanmayın. Sorular arasında ekrana <code>bad line?</code> yazar. Çok satırlı sorunun içinde soruyu keser ve quiz durur.</td></tr>
+<tr><td>Metin</td><td>Metinleri çift tırnak içine alın. İçlerindeki virgül ayırıcı sayılmaz.</td></tr>
+<tr><td>Metin içinde tırnak</td><td>İki kez yazın: <code>"Komut: ""ls -l"" ne yapar?"</code></td></tr>
+<tr><td>Metin içinde yeni satır</td><td><code>\n</code> yazın. Gerçek ters bölü için <code>\\</code> yazın.</td></tr>
+<tr><td>Boş alan</td><td><code>""</code> yazın. Alan sayısı önemlidir, boş alan atlanamaz.</td></tr>
+<tr><td>Tip adı</td><td>Büyük-küçük harf fark etmez: <code>TrueFalse</code>, <code>truefalse</code>.</td></tr>
+<tr><td>Kimlik</td><td>Dosya içinde benzersiz olmalı. Rakam veya metin olabilir, küçük harfe çevrilerek kaydedilir.</td></tr>
+<tr><td>Uzun satırlar</td><td>Ekrana yazılırken otomatik sarılır.</td></tr>
+</table></div>
+
+<h2 id="tr-tipler">Soru tipleri</h2>
+<h3>Preface: bilgi metni</h3>
+<div class="code"><pre><code>KİMLİK, Preface, "Gösterilecek metin"</code></pre></div>
+<p>Metni gösterir, cevap istemez, kaydedilmez ve sayılmaz. Bağlam vermek için soruların önüne konur.</p>
+
+<h3>TrueFalse: doğru/yanlış</h3>
+<div class="code"><pre><code>KİMLİK, TrueFalse, "Soru", cevap, "Doğru mesajı", "Yanlış mesajı", önkoşul</code></pre></div>
+<div class="table"><table>
+<tr><th>Alan</th><th>Zorunlu</th><th>Değer</th></tr>
+<tr><td>cevap</td><td>Evet</td><td><code>T</code> veya <code>F</code></td></tr>
+<tr><td>Doğru mesajı</td><td>Evet</td><td>Doğru cevapta gösterilir, istemiyorsanız <code>""</code></td></tr>
+<tr><td>Yanlış mesajı</td><td>Evet</td><td>Yanlış cevapta gösterilir, istemiyorsanız <code>""</code></td></tr>
+<tr><td>önkoşul</td><td>Hayır</td><td>Başka bir sorunun kimliği</td></tr>
+</table></div>
+<p>Öğrenci yalnızca <code>T</code> veya <code>F</code> yazmalıdır, küçük harf de olur. <code>true</code>, boş giriş veya başka bir şey soruyu tekrar sormaz, yanlış sayılır. Bu, orijinal programın davranışıdır.</p>
+<div class="code"><pre><code>3, TrueFalse, "nmap açık portları bulabilir.", T, "", ""</code></pre></div>
+
+<h3>MultipleChoice: çoktan seçmeli</h3>
+<div class="code"><pre><code>KİMLİK, MultipleChoice, "Soru", cevap, "Doğru mesajı", "Yanlış mesajı", önkoşul, "A şıkkı", "B şıkkı", ...</code></pre></div>
+<div class="table"><table>
+<tr><th>Alan</th><th>Zorunlu</th><th>Değer</th></tr>
+<tr><td>cevap</td><td>Evet</td><td>Doğru şıkkın harfi, küçük harf de olur</td></tr>
+<tr><td>Doğru ve yanlış mesajı</td><td>Evet</td><td>Metin veya <code>""</code></td></tr>
+<tr><td>önkoşul</td><td>Evet</td><td>Kimlik, yoksa mutlaka <code>""</code></td></tr>
+<tr><td>şıklar</td><td>En az 2, en çok 26</td><td>Sırayla A, B, C harfi otomatik verilir</td></tr>
+</table></div>
+<div class="note"><strong>En sık yapılan hata:</strong> Önkoşul alanındaki <code>""</code> unutulursa ilk şık önkoşul sanılır ve soru hata vermeden hiç sorulmaz. Doğru sayı: <code>"Yanlış mesajı", "", "A şıkkı"</code>.</div>
+<p>Geçersiz girişte soru yeniden sorulur, yanlış sayılmaz. Doğru cevabın harfi şıklar arasında yoksa quiz o soruya gelince durur.</p>
+
+<h3>Survey: anket</h3>
+<div class="code"><pre><code>KİMLİK, Survey, "Soru", önkoşul, "A şıkkı", "B şıkkı"
+KİMLİK, Survey, "Soru", önkoşul</code></pre></div>
+<p>Şık yazılırsa öğrenci birini seçer, şık yazılmazsa serbest metin girer ve boş bırakabilir. Önkoşul alanı zorunludur, yoksa <code>""</code> yazın. Doğru cevap yoktur, geri bildirim gösterilmez ve yanlış sayısına girmez. Bir quiz yalnızca anketten oluşuyorsa sonda <code>Your responses have been recorded.</code> yazar.</p>
+
+<h2 id="tr-onkosul">Önkoşullar</h2>
+<p>Önkoşul, bir soruyu yalnızca başka bir soru yanlış cevaplandıysa sorar. Eksik bilgiyi pekiştirmek veya yanlış yapan öğrenciden neden yaptığını öğrenmek için kullanılır.</p>
+<div class="code"><pre><code>1, TrueFalse, "Telnet şifreli çalışır.", F, "", ""
+2, MultipleChoice, "Şifreli uzak bağlantı için hangisi kullanılır?", B, "", "", 1, "telnet", "ssh"
+3, Survey, "Yanlış yanıtlama nedeniniz neydi?", 1, "Bilmiyordum", "Dikkatsizlik"</code></pre></div>
+<ul>
+<li>Önkoşul olarak verilen soru dosyada daha önce gelmelidir. Sonra gelirse bu soru hiç sorulmaz.</li>
+<li>Kimlikler büyük-küçük harf ayrımı yapmaz.</li>
+<li>Anket ve Preface yanlış sayılmadığı için önkoşul olamaz, onlara bağlı soru hiç sorulmaz.</li>
+<li>Atlanan soru kayıt dosyasına yazılmaz ve sayılmaz.</li>
+<li>Her üç soru tipi de önkoşul alabilir.</li>
+</ul>
+
+<h2 id="tr-ogrenci">Quiz çalıştırma</h2>
+<p>Quiz, labı başlattığınız terminalde ve <code>labtainer-student</code> klasöründe çalıştırılır. Başka klasörden çalıştırılırsa <code>The lab has no quizzes</code> yazar.</p>
+<div class="code"><pre><code>cd ~/labtainer/labtainer-student</code></pre></div>
+<div class="table"><table>
+<tr><th>Durum</th><th>Komut</th></tr>
+<tr><td>Lab çalışıyor, tek quiz var</td><td><code>quiz</code></td></tr>
+<tr><td>Lab çalışıyor, birden fazla quiz var</td><td><code>quiz -q pre</code></td></tr>
+<tr><td>Lab çalışmıyor</td><td><code>quiz -l iptables2</code></td></tr>
+<tr><td>Lab çalışmıyor, birden fazla quiz var</td><td><code>quiz -l dns -q post</code></td></tr>
+<tr><td>Birden fazla lab çalışıyor</td><td><code>quiz -l telnetlab</code></td></tr>
+<tr><td>Yardım</td><td><code>quiz -h</code></td></tr>
+</table></div>
+<div class="table"><table>
+<tr><th>Soru</th><th>Öğrenci ne yazar</th></tr>
+<tr><td>TrueFalse</td><td><code>T</code> veya <code>F</code>, sonra Enter</td></tr>
+<tr><td>MultipleChoice</td><td>Şık harfi, sonra Enter</td></tr>
+<tr><td>Survey (şıklı)</td><td>Şık harfi, sonra Enter</td></tr>
+<tr><td>Survey (metin)</td><td>Serbest metin, sonra Enter</td></tr>
+</table></div>
+<p>Sonda yanlış sayısı veya <code>You answered all questions correctly.</code> yazar. Quiz istendiği kadar tekrar çözülebilir, her biri ayrı deneme olarak kaydedilir. <code>Ctrl+C</code> quiz'den çıkar ve o deneme kaydedilmez.</p>
+
+<h2 id="tr-kayit">Cevap kaydı</h2>
+<p>Quiz tamamlanınca cevaplar şu dosyaya eklenir. Eski denemeler silinmez.</p>
+<div class="code"><pre><code>labtainer-student/.tmp/&lt;lab&gt;/&lt;quiz&gt;.quiz.json</code></pre></div>
+<div class="code"><pre><code>[
+    {
+        "time": "2026-10-31 20:35:54.837782",
+        "responses": [
+            {
+                "id": "1",
+                "type": "multiplechoice",
+                "question": "Telnet varsayılan olarak hangi portu kullanır?",
+                "response": "A",
+                "response_text": "22",
+                "correct": false
+            }
+        ]
+    }
+]</code></pre></div>
+<div class="table"><table>
+<tr><th>Alan</th><th>Anlamı</th></tr>
+<tr><td><code>time</code></td><td>Denemenin bitiş zamanı</td></tr>
+<tr><td><code>id</code>, <code>type</code>, <code>question</code></td><td>Sorunun kimliği, tipi ve metni</td></tr>
+<tr><td><code>response</code></td><td>Yazılan harf. Metin anketinde <code>null</code></td></tr>
+<tr><td><code>response_text</code></td><td>Seçilen şıkkın metni veya yazılan metin. TrueFalse'ta <code>null</code></td></tr>
+<tr><td><code>correct</code></td><td><code>true</code> veya <code>false</code>. Ankette <code>null</code></td></tr>
+</table></div>
+<h3>Paketleme</h3>
+<p><code>stoplab</code>, bu dosyaları <code>~/labtainer_xfer/&lt;lab&gt;/</code> altındaki <code>.lab</code> dosyasına ekler. <code>stoplab</code>'den sonra çözülen quiz, lab bir sonraki durdurulmasında pakete girer. Bu nedenle son quiz'den sonra lab bir kez daha başlatılıp durdurulmalıdır.</p>
+<p><code>redo</code> (<code>labtainer -r</code>) cevapları silmez. Tek istisna: <code>read_pre.txt</code> içeren bir labın ilk açılışındaki <code>Continue? (y/n)</code> sorusuna <code>y</code> dışında cevap verilirse Labtainer <code>.tmp/&lt;lab&gt;</code> klasörünü siler.</p>
+
+<h2 id="tr-egitmen">Eğitmen işlemleri</h2>
+<h3>Quiz'i öğrencilere ulaştırma</h3>
+<ul>
+<li><strong>Elle:</strong> <code>.quiz</code> dosyasını her öğrencinin <code>~/labtainer/trunk/labs/&lt;lab&gt;/config/</code> klasörüne kopyalatın.</li>
+<li><strong>IModule:</strong> Labtainer'ın eğitmen dağıtım yöntemi. <code>.quiz</code> dosyalarını yolları <code>labs</code> klasörüne göreli bir tar dosyasına koyup web'de yayınlayın, örneğin <code>telnetlab/config/pre.quiz</code>. Öğrenciler <code>imodule &lt;url&gt;</code> çalıştırır. Dosyalar sonraki her <code>update-labtainer.sh</code> veya <code>imodule -u</code> ile yenilenir.</li>
+</ul>
+<p>Öğrencilerin ayrıca quiz modülünü kurması gerekir, IModule yalnızca <code>labs</code> klasörüne yazar.</p>
+<h3>Cevapları toplama</h3>
+<ol>
+<li>Öğrenciler <code>stoplab</code> çalıştırır ve <code>~/labtainer_xfer/&lt;lab&gt;/</code> içindeki <code>.lab</code> dosyasını gönderir.</li>
+<li>Dosyaları kendi <code>~/labtainer_xfer/&lt;lab&gt;/</code> klasörünüze koyun.</li>
+<li>Lab notlandırması için <code>labtainer-instructor</code> klasöründen <code>gradelab &lt;lab&gt;</code> çalıştırın. Quiz dosyaları notlandırmayı etkilemez.</li>
+</ol>
+<p><code>gradelab</code> quiz cevaplarını göstermez, onları <code>.lab</code> dosyasından okumanız gerekir. <code>.lab</code> bir zip dosyasıdır:</p>
+<div class="code"><pre><code>python3 -m zipfile -l ogrenci_at_umich.edu.telnetlab.lab
+python3 -m zipfile -e ogrenci_at_umich.edu.telnetlab.lab cevaplar/</code></pre></div>
+<h3>Tüm öğrencileri tek tabloya alma</h3>
+<p>Aşağıdaki kodu <code>quiz_report.py</code> olarak kaydedin. Bir labın tüm <code>.lab</code> dosyalarından, her cevap için bir satır içeren CSV üretir.</p>
+<div class="code"><pre><code>import csv, glob, json, os, sys, zipfile
+
+lab = sys.argv[1]
+writer = csv.writer(sys.stdout)
+writer.writerow(['student', 'quiz', 'attempt', 'time', 'id', 'type', 'response', 'response_text', 'correct'])
+for path in sorted(glob.glob(os.path.expanduser('~/labtainer_xfer/%s/*.lab' % lab))):
+    student = os.path.basename(path).rsplit('.', 2)[0]
+    with zipfile.ZipFile(path) as z:
+        for name in z.namelist():
+            if name.endswith('.quiz.json'):
+                for number, attempt in enumerate(json.loads(z.read(name)), 1):
+                    for r in attempt['responses']:
+                        writer.writerow([student, name[:-len('.quiz.json')], number, attempt['time'], r['id'],
+                                         r['type'], r['response'], r['response_text'], r['correct']])</code></pre></div>
+<div class="code"><pre><code>python3 quiz_report.py telnetlab &gt; telnetlab_quiz.csv</code></pre></div>
+
+<h2 id="tr-sunucu">Çok kullanıcılı sunucu</h2>
+<p>Çok kullanıcılı Labtainer yamasında quiz modülü zaten vardır, <code>install.sh</code> kullanılmaz. <code>setup.sh</code> bunu <code>/home/student/labtainer</code> üzerine uygular, öğrenci kopyaları da oradan oluşur.</p>
+<ul>
+<li>Yeni kullanıcılar modülü <code>open.sh</code> ile alır. Mevcut kullanıcılar <code>setup.sh</code> yeniden çalıştırıldığında alır.</li>
+<li>Her öğrencinin kendi Labtainer kopyası olduğu için yeni <code>.quiz</code> dosyaları <code>/home/student/labtainer</code> yanında mevcut öğrencilerin kopyalarına da konmalıdır.</li>
+<li>Komutlar aynıdır. Her öğrenci yalnızca kendi labını görür ve cevapları ayrı tutulur.</li>
+</ul>
+
+<h2 id="tr-hatalar">Hata mesajları</h2>
+<div class="table"><table>
+<tr><th>Mesaj</th><th>Neden</th><th>Çözüm</th></tr>
+<tr><td><code>The lab has no quizzes</code></td><td>Labda <code>.quiz</code> yok, lab adı yanlış veya yanlış klasördesiniz</td><td><code>labtainer-student</code> klasörüne geçin, adı kontrol edin</td></tr>
+<tr><td><code>No labs are currently running...</code></td><td>Çalışan lab yok</td><td><code>quiz -l &lt;lab&gt;</code> kullanın</td></tr>
+<tr><td><code>multiple labs running...</code></td><td>Birden fazla lab açık</td><td><code>quiz -l &lt;lab&gt;</code> kullanın</td></tr>
+<tr><td><code>Multiple quizzes for this lab...</code></td><td>Labda birden fazla quiz var</td><td><code>-q</code> ile seçin</td></tr>
+<tr><td><code>Given quiz ... not one of the quizzes</code></td><td><code>-q</code> adı yanlış</td><td>Mesajdaki adlardan birini yazın</td></tr>
+<tr><td><code>Not enough elements in this question</code></td><td>Alan eksik veya çok satırlı soruda boş satır var</td><td>Alanları sayın, <code>""</code> ekleyin</td></tr>
+<tr><td><code>Answer X of question N is not one of its options</code></td><td>Doğru cevap harfi şıklarda yok</td><td>Harfi veya şıkları düzeltin</td></tr>
+<tr><td><code>Unknown question type ...</code></td><td>Tip adı yanlış yazılmış, soru atlanır</td><td>Tip adını düzeltin</td></tr>
+<tr><td><code>bad line?</code></td><td>Boş veya bozuk satır</td><td>Satırı silin</td></tr>
+<tr><td>Soru hiç sorulmuyor</td><td>Çoktan seçmelide önkoşul <code>""</code> unutulmuş veya önkoşul sorusu doğru yapılmış</td><td>Alanları kontrol edin</td></tr>
+<tr><td>Cevaplar <code>.lab</code> içinde yok</td><td>Modül güncellemeyle gitmiş veya quiz <code>stoplab</code>'den sonra çözülmüş</td><td><code>./install.sh</code> çalıştırın, labı başlatıp durdurun</td></tr>
+</table></div>
+
+<h2 id="tr-sinirlar">Sınırlar</h2>
+<ul>
+<li><strong>Sınav için değildir.</strong> Doğru cevaplar <code>.quiz</code> dosyasında düz metindir ve öğrenci okuyabilir. Öğrenci kayıt dosyasını <code>stoplab</code>'den önce değiştirebilir.</li>
+<li><strong>Not ekranı yok.</strong> <code>gradelab</code> quiz sonuçlarını göstermez ve nota katmaz.</li>
+<li><strong>Tek cevap.</strong> Çoktan seçmeli soruda birden fazla doğru şık desteklenmez.</li>
+<li><strong>Soru ve şık sırası sabittir.</strong> Karıştırma ve öğrenciye göre değiştirme yoktur.</li>
+<li><strong>Quiz zorunlu değildir.</strong> Lab başlatma veya durdurma quiz çözülüp çözülmediğine bakmaz.</li>
+</ul>
+</main>
+</div>
+
+<!-- ============================== ENGLISH ============================== -->
+<div class="page" id="lang-en" lang="en" hidden>
+<nav class="rail" aria-label="Contents">
+  <a href="#en-overview">Overview</a>
+  <a href="#en-install">Installation</a>
+  <a href="#en-updates">Updates</a>
+  <a href="#en-add">Add a quiz to a lab</a>
+  <a href="#en-multi">More than one quiz</a>
+  <a href="#en-format">File format</a>
+  <a href="#en-types">Question types</a>
+  <a href="#en-prereq">Prerequisites</a>
+  <a href="#en-run">Take a quiz</a>
+  <a href="#en-saved">Saved answers</a>
+  <a href="#en-instructor">Instructor tasks</a>
+  <a href="#en-server">Multi-user server</a>
+  <a href="#en-errors">Error messages</a>
+  <a href="#en-limits">Limitations</a>
+</nav>
+<main>
+<h1>Labtainer Quiz Guide</h1>
+<p class="lead">How lab developers and instructors add quizzes, run them, collect the answers, and install the VM package.</p>
+
+<h2 id="en-overview">Overview</h2>
+<p>A quiz is a plain text file in a lab's own <code>config</code> directory. It needs no separate package and no image rebuild. As soon as the file is in the lab, the <code>quiz</code> command finds it.</p>
+<p>A quiz runs in the student's Linux terminal, not inside the lab containers. A student can therefore open it while the lab is not running.</p>
+<div class="table"><table>
+<tr><th>Feature</th><th>Original Labtainer</th><th>With the quiz module</th></tr>
+<tr><td>Information text (<code>Preface</code>)</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>True or false (<code>TrueFalse</code>)</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Multiple choice (<code>MultipleChoice</code>)</td><td>No</td><td>Yes, graded</td></tr>
+<tr><td>Survey (<code>Survey</code>)</td><td>No</td><td>Yes, not graded</td></tr>
+<tr><td>Saved answers</td><td>No</td><td>Every attempt is saved</td></tr>
+<tr><td>Answers in the <code>.lab</code> file</td><td>No</td><td>Added by <code>stoplab</code></td></tr>
+</table></div>
+<h3>Who does what</h3>
+<div class="table"><table>
+<tr><th>Role</th><th>Task</th><th>Needs the module</th></tr>
+<tr><td>Lab developer</td><td>Writes the <code>.quiz</code> file, adds it to the lab, and tests it to the end</td><td>Yes</td></tr>
+<tr><td>Student</td><td>Takes the quiz, stops the lab with <code>stoplab</code>, and sends the <code>.lab</code> file</td><td>Yes, for the new types and saved answers</td></tr>
+<tr><td>Instructor</td><td>Collects <code>.lab</code> files, grades them, and reads the answers</td><td>No, <code>gradelab</code> works unchanged</td></tr>
+</table></div>
+
+<h2 id="en-install">Installation (VM package)</h2>
+<p>The package is for people who run Labtainer on their own VM. The file is <code>labtainer-quiz.tar.gz</code>.</p>
+<ol>
+<li>Copy the package to the VM. A shared folder, <code>scp</code>, or a browser download all work.</li>
+<li>Run these commands as the user who runs Labtainer. Do not use <code>sudo</code>.</li>
+</ol>
+<div class="code"><pre><code>tar xzf labtainer-quiz.tar.gz
+cd labtainer-quiz
+./install.sh</code></pre></div>
+<p>A successful install prints <code>Quiz module installed in ...</code>. If a lab is running, stop it first with <code>stoplab</code>.</p>
+<p>The installer finds Labtainer through <code>LABTAINER_DIR</code>, or at <code>~/labtainer/trunk</code>. For another location:</p>
+<div class="code"><pre><code>LABTAINER_DIR=/other/path/labtainer/trunk ./install.sh</code></pre></div>
+<h3>What is in the package</h3>
+<div class="table"><table>
+<tr><th>File</th><th>Purpose</th></tr>
+<tr><td><code>install.sh</code></td><td>Installs, reapplies, and removes the module</td></tr>
+<tr><td><code>quiz</code></td><td>The new quiz program, which replaces Labtainer's <code>quiz</code> file</td></tr>
+<tr><td><code>labutils_quiz.patch</code></td><td>Adds three lines to <code>labutils.py</code> that put answers in the <code>.lab</code> file</td></tr>
+<tr><td><code>README.md</code></td><td>Short usage notes in English</td></tr>
+</table></div>
+<h3>What changes on the system</h3>
+<p>Only two files change, both in <code>trunk/scripts/labtainer-student/bin</code>: <code>quiz</code> and <code>labutils.py</code>. Their backups are in <code>.quiz_backup</code> in the same directory. To confirm the install, run this command. The result should be <code>1</code>:</p>
+<div class="code"><pre><code>grep -c 'quiz.json' ~/labtainer/trunk/scripts/labtainer-student/bin/labutils.py</code></pre></div>
+<p>If the <code>patch</code> command is missing, the installer stops, prints the install command, and leaves the files unchanged:</p>
+<div class="code"><pre><code>sudo apt-get install patch</code></pre></div>
+<h3>Remove the module</h3>
+<div class="code"><pre><code>./install.sh --uninstall</code></pre></div>
+<p>Run it from the package directory, so keep that directory. The original files return. Saved answers and <code>.quiz</code> files stay. The original program silently skips <code>MultipleChoice</code> and <code>Survey</code> questions.</p>
+
+<h2 id="en-updates">What happens at each update</h2>
+<p><strong>Rule: run <code>./install.sh</code> from the package directory after every <code>update-labtainer.sh</code>.</strong> If nothing changed, it does no harm.</p>
+<div class="code"><pre><code>cd ~/labtainer/labtainer-student
+update-labtainer.sh
+cd ~/labtainer-quiz
+./install.sh</code></pre></div>
+<p><code>update-labtainer.sh</code> extracts the new release with <code>tar --keep-newer-files</code>. It skips a file on disk that is newer than the release copy, and replaces one that is older. <code>install.sh</code> keeps the original dates of the files it changes, so an update still picks up newer files from a release.</p>
+<div class="table"><table>
+<tr><th>During the update</th><th>Result</th><th>What to do</th></tr>
+<tr><td>The release has a newer <code>labutils.py</code> or <code>quiz</code></td><td>The new copy replaces it, and that part of the module is gone</td><td><code>./install.sh</code> applies it again</td></tr>
+<tr><td>The release did not change these two files</td><td>The module stays in place</td><td><code>./install.sh</code> changes nothing</td></tr>
+<tr><td>A <code>.quiz</code> file you added under your own name</td><td>It stays</td><td>Nothing</td></tr>
+<tr><td>You edited a <code>.quiz</code> file that ships with Labtainer</td><td>It stays if your file is newer than the release copy, otherwise it is overwritten</td><td>Keep your changes in a separate file with your own name</td></tr>
+<tr><td>Saved answers and <code>.lab</code> files</td><td>Not touched</td><td>Nothing</td></tr>
+</table></div>
+<div class="note"><strong>Important:</strong> If you skip <code>./install.sh</code> after an update that replaced <code>quiz</code>, the new types stop working. If it replaced <code>labutils.py</code>, quizzes still work, but answers no longer reach the <code>.lab</code> file, and no error is shown.</div>
+<h3>If the patch is refused</h3>
+<p>The message <code>This version of labutils.py does not accept the patch, nothing was changed.</code> means the new Labtainer release changed the code that the patch touches. No file changes, and Labtainer runs as the original. You then need a package that matches the new release.</p>
+<h3>A new package version</h3>
+<p>If a new package changes only the <code>quiz</code> program, extract it and run <code>./install.sh</code>. If <code>labutils_quiz.patch</code> also changed, first run <code>./install.sh --uninstall</code> from the old package directory, then run <code>./install.sh</code> from the new one.</p>
+
+<h2 id="en-add">Add a quiz to a lab</h2>
+<ol>
+<li>Create a file with the <code>.quiz</code> extension in the lab's <code>config</code> directory. The file name is the quiz name. Do not use spaces.</li>
+<li>Write the questions using the <a href="#en-format">file format</a>.</li>
+<li>Test the quiz by completing it to the end.</li>
+<li>State in the lab manual when to take the quiz and which command to use.</li>
+</ol>
+<div class="code"><pre><code>~/labtainer/trunk/labs/telnetlab/config/telnet.quiz</code></pre></div>
+<p>A short starting example:</p>
+<div class="code"><pre><code># telnetlab preparation quiz
+0, Preface, "This quiz helps you check yourself before the lab."
+1, MultipleChoice, "Which port does telnet use by default?", B,
+   "That is correct.", "Telnet uses port 23.", "",
+   "22", "23", "80", "443"
+2, TrueFalse, "Telnet traffic is sent as plain text.", T, "", ""
+3, Survey, "How difficult was this lab?", "", "Easy", "Medium", "Hard"
+4, Survey, "What would you improve?", ""</code></pre></div>
+<div class="note"><strong>Test to the end:</strong> The file is read as the questions are asked. A broken question stops the quiz only when it is reached, and that attempt is not saved. To see prerequisite questions, also take the quiz with wrong answers.</div>
+<p>Working examples are in the <code>config</code> directories of the <code>db-access</code>, <code>dmz-lab</code>, <code>dns</code>, and <code>iptables2</code> labs.</p>
+
+<h2 id="en-multi">More than one quiz in a lab</h2>
+<p>Put more than one <code>.quiz</code> file in the same <code>config</code> directory. There is no limit on the number.</p>
+<div class="code"><pre><code>labs/telnetlab/config/pre.quiz
+labs/telnetlab/config/post.quiz
+labs/telnetlab/config/survey.quiz</code></pre></div>
+<p>The plain <code>quiz</code> command then asks no questions and lists the choices:</p>
+<div class="code"><pre><code>Multiple quizzes for this lab.  Pick one with the -q option: post pre survey</code></pre></div>
+<p>The student gives the name without the <code>.quiz</code> extension:</p>
+<div class="code"><pre><code>quiz -q pre</code></pre></div>
+<p>Each quiz has its own saved file (<code>pre.quiz.json</code>, <code>post.quiz.json</code>), and <code>stoplab</code> adds all of them to the <code>.lab</code> file. Quizzes cannot depend on each other: a prerequisite sees only questions in its own file, and the program does not enforce an order. State the order in the lab manual.</p>
+
+<h2 id="en-format">File format</h2>
+<p>Each question is one comma-separated entry. The first two fields are always the ID and the type.</p>
+<div class="table"><table>
+<tr><th>Rule</th><th>Details</th></tr>
+<tr><td>Encoding</td><td>UTF-8 without a BOM. Non-ASCII text is supported. A BOM breaks the first line, so check this if you edit in Windows Notepad. CRLF line endings are fine.</td></tr>
+<tr><td>Comments</td><td>A line that starts with <code>#</code> is skipped, even in the middle of a multi-line question.</td></tr>
+<tr><td>Continuing a question</td><td>If a line ends with <code>,</code> the question continues on the next line. If a line ends with <code>\</code> the text joins the next line, which lets you split long text.</td></tr>
+<tr><td>Blank lines</td><td>Do not use them. Between questions, one prints <code>bad line?</code>. Inside a multi-line question, one cuts the question short and the quiz stops.</td></tr>
+<tr><td>Text</td><td>Put text in double quotes. A comma inside quotes is not a separator.</td></tr>
+<tr><td>Quotes in text</td><td>Double them: <code>"What does ""ls -l"" do?"</code></td></tr>
+<tr><td>New line in text</td><td>Write <code>\n</code>. For a real backslash, write <code>\\</code>.</td></tr>
+<tr><td>Empty fields</td><td>Write <code>""</code>. The number of fields matters, so an empty field cannot be left out.</td></tr>
+<tr><td>Type name</td><td>Case does not matter: <code>TrueFalse</code>, <code>truefalse</code>.</td></tr>
+<tr><td>ID</td><td>Must be unique in the file. It can be a number or text, and is saved in lowercase.</td></tr>
+<tr><td>Long lines</td><td>Wrapped automatically on screen.</td></tr>
+</table></div>
+
+<h2 id="en-types">Question types</h2>
+<h3>Preface: information text</h3>
+<div class="code"><pre><code>ID, Preface, "Text to display"</code></pre></div>
+<p>Shows text and asks for nothing. It is not saved or counted. Place it before questions to give context.</p>
+
+<h3>TrueFalse: true or false</h3>
+<div class="code"><pre><code>ID, TrueFalse, "Question", answer, "Right message", "Wrong message", prerequisite</code></pre></div>
+<div class="table"><table>
+<tr><th>Field</th><th>Required</th><th>Value</th></tr>
+<tr><td>answer</td><td>Yes</td><td><code>T</code> or <code>F</code></td></tr>
+<tr><td>Right message</td><td>Yes</td><td>Shown for a right answer, or <code>""</code></td></tr>
+<tr><td>Wrong message</td><td>Yes</td><td>Shown for a wrong answer, or <code>""</code></td></tr>
+<tr><td>prerequisite</td><td>No</td><td>The ID of another question</td></tr>
+</table></div>
+<p>The student must type <code>T</code> or <code>F</code>, in either case. <code>true</code>, an empty answer, or anything else is not asked again and counts as wrong. This is how the original program behaves.</p>
+<div class="code"><pre><code>3, TrueFalse, "nmap can find open ports.", T, "", ""</code></pre></div>
+
+<h3>MultipleChoice: multiple choice</h3>
+<div class="code"><pre><code>ID, MultipleChoice, "Question", answer, "Right message", "Wrong message", prerequisite, "Option A", "Option B", ...</code></pre></div>
+<div class="table"><table>
+<tr><th>Field</th><th>Required</th><th>Value</th></tr>
+<tr><td>answer</td><td>Yes</td><td>The letter of the correct option, in either case</td></tr>
+<tr><td>Right and wrong messages</td><td>Yes</td><td>Text or <code>""</code></td></tr>
+<tr><td>prerequisite</td><td>Yes</td><td>An ID, or <code>""</code> if there is none</td></tr>
+<tr><td>options</td><td>2 to 26</td><td>Lettered A, B, C automatically, in order</td></tr>
+</table></div>
+<div class="note"><strong>The most common mistake:</strong> If you leave out the <code>""</code> for the prerequisite, the first option is read as the prerequisite, and the question is skipped with no error. The correct order is <code>"Wrong message", "", "Option A"</code>.</div>
+<p>An invalid entry asks the question again and does not count as wrong. If the answer letter is not one of the options, the quiz stops when it reaches that question.</p>
+
+<h3>Survey: survey</h3>
+<div class="code"><pre><code>ID, Survey, "Question", prerequisite, "Option A", "Option B"
+ID, Survey, "Question", prerequisite</code></pre></div>
+<p>With options, the student selects one. Without options, the student types free text and may leave it empty. The prerequisite field is required, so write <code>""</code> if there is none. A survey has no correct answer, shows no feedback, and is not part of the wrong answer count. If a quiz contains only surveys, it ends with <code>Your responses have been recorded.</code></p>
+
+<h2 id="en-prereq">Prerequisites</h2>
+<p>A prerequisite asks a question only if the student answered another question incorrectly. Use it to reinforce a missed concept, or to ask why the student got it wrong.</p>
+<div class="code"><pre><code>1, TrueFalse, "Telnet is encrypted.", F, "", ""
+2, MultipleChoice, "Which one provides an encrypted remote session?", B, "", "", 1, "telnet", "ssh"
+3, Survey, "Why did you answer incorrectly?", 1, "I did not know", "I was not careful"</code></pre></div>
+<ul>
+<li>The prerequisite question must come earlier in the file. If it comes later, this question is never asked.</li>
+<li>IDs are not case-sensitive.</li>
+<li>Surveys and Prefaces are never wrong, so a question that depends on one is never asked.</li>
+<li>A skipped question is not saved or counted.</li>
+<li>All three question types accept a prerequisite.</li>
+</ul>
+
+<h2 id="en-run">Take a quiz</h2>
+<p>Run a quiz in the terminal you use to start labs, from the <code>labtainer-student</code> directory. From any other directory it prints <code>The lab has no quizzes</code>.</p>
+<div class="code"><pre><code>cd ~/labtainer/labtainer-student</code></pre></div>
+<div class="table"><table>
+<tr><th>Situation</th><th>Command</th></tr>
+<tr><td>Lab running, one quiz</td><td><code>quiz</code></td></tr>
+<tr><td>Lab running, more than one quiz</td><td><code>quiz -q pre</code></td></tr>
+<tr><td>Lab not running</td><td><code>quiz -l iptables2</code></td></tr>
+<tr><td>Lab not running, more than one quiz</td><td><code>quiz -l dns -q post</code></td></tr>
+<tr><td>More than one lab running</td><td><code>quiz -l telnetlab</code></td></tr>
+<tr><td>Help</td><td><code>quiz -h</code></td></tr>
+</table></div>
+<div class="table"><table>
+<tr><th>Question</th><th>What the student types</th></tr>
+<tr><td>TrueFalse</td><td><code>T</code> or <code>F</code>, then Enter</td></tr>
+<tr><td>MultipleChoice</td><td>The option letter, then Enter</td></tr>
+<tr><td>Survey with options</td><td>The option letter, then Enter</td></tr>
+<tr><td>Survey without options</td><td>Free text, then Enter</td></tr>
+</table></div>
+<p>At the end, the quiz prints the wrong answer count or <code>You answered all questions correctly.</code> Students can repeat a quiz as often as they like, and each attempt is saved separately. <code>Ctrl+C</code> leaves the quiz, and that attempt is not saved.</p>
+
+<h2 id="en-saved">Saved answers</h2>
+<p>When a quiz is completed, the answers are added to this file. Earlier attempts stay.</p>
+<div class="code"><pre><code>labtainer-student/.tmp/&lt;lab&gt;/&lt;quiz&gt;.quiz.json</code></pre></div>
+<div class="code"><pre><code>[
+    {
+        "time": "2026-10-31 20:35:54.837782",
+        "responses": [
+            {
+                "id": "1",
+                "type": "multiplechoice",
+                "question": "Which port does telnet use by default?",
+                "response": "A",
+                "response_text": "22",
+                "correct": false
+            }
+        ]
+    }
+]</code></pre></div>
+<div class="table"><table>
+<tr><th>Field</th><th>Meaning</th></tr>
+<tr><td><code>time</code></td><td>When the attempt ended</td></tr>
+<tr><td><code>id</code>, <code>type</code>, <code>question</code></td><td>The question's ID, type, and text</td></tr>
+<tr><td><code>response</code></td><td>The letter typed. <code>null</code> for a free text survey</td></tr>
+<tr><td><code>response_text</code></td><td>The selected option's text, or the typed text. <code>null</code> for TrueFalse</td></tr>
+<tr><td><code>correct</code></td><td><code>true</code> or <code>false</code>. <code>null</code> for a survey</td></tr>
+</table></div>
+<h3>Packaging</h3>
+<p><code>stoplab</code> adds these files to the <code>.lab</code> file in <code>~/labtainer_xfer/&lt;lab&gt;/</code>. A quiz completed after <code>stoplab</code> is added the next time the lab stops, so after a final quiz, start and stop the lab once more.</p>
+<p><code>redo</code> (<code>labtainer -r</code>) keeps the answers. There is one exception: when a lab has a <code>read_pre.txt</code> file, answering anything other than <code>y</code> at its <code>Continue? (y/n)</code> prompt on first start makes Labtainer delete <code>.tmp/&lt;lab&gt;</code>.</p>
+
+<h2 id="en-instructor">Instructor tasks</h2>
+<h3>Deliver a quiz to students</h3>
+<ul>
+<li><strong>By hand:</strong> Have each student copy the <code>.quiz</code> file to <code>~/labtainer/trunk/labs/&lt;lab&gt;/config/</code>.</li>
+<li><strong>IModule:</strong> Labtainer's method for instructor content. Publish a tar file with paths relative to the <code>labs</code> directory, such as <code>telnetlab/config/pre.quiz</code>. Students run <code>imodule &lt;url&gt;</code>. The files refresh at each <code>update-labtainer.sh</code> or <code>imodule -u</code>.</li>
+</ul>
+<p>Students must also install the quiz module. An IModule writes only to the <code>labs</code> directory.</p>
+<h3>Collect the answers</h3>
+<ol>
+<li>Students run <code>stoplab</code> and send the <code>.lab</code> file from <code>~/labtainer_xfer/&lt;lab&gt;/</code>.</li>
+<li>Put the files in your own <code>~/labtainer_xfer/&lt;lab&gt;/</code> directory.</li>
+<li>To grade the lab, run <code>gradelab &lt;lab&gt;</code> from the <code>labtainer-instructor</code> directory. Quiz files do not affect grading.</li>
+</ol>
+<p><code>gradelab</code> does not display quiz answers, so read them from the <code>.lab</code> file, which is a zip archive:</p>
+<div class="code"><pre><code>python3 -m zipfile -l student_at_umich.edu.telnetlab.lab
+python3 -m zipfile -e student_at_umich.edu.telnetlab.lab answers/</code></pre></div>
+<h3>Combine all students in one table</h3>
+<p>Save this code as <code>quiz_report.py</code>. It reads all <code>.lab</code> files of a lab and writes a CSV with one row per answer.</p>
+<div class="code"><pre><code>import csv, glob, json, os, sys, zipfile
+
+lab = sys.argv[1]
+writer = csv.writer(sys.stdout)
+writer.writerow(['student', 'quiz', 'attempt', 'time', 'id', 'type', 'response', 'response_text', 'correct'])
+for path in sorted(glob.glob(os.path.expanduser('~/labtainer_xfer/%s/*.lab' % lab))):
+    student = os.path.basename(path).rsplit('.', 2)[0]
+    with zipfile.ZipFile(path) as z:
+        for name in z.namelist():
+            if name.endswith('.quiz.json'):
+                for number, attempt in enumerate(json.loads(z.read(name)), 1):
+                    for r in attempt['responses']:
+                        writer.writerow([student, name[:-len('.quiz.json')], number, attempt['time'], r['id'],
+                                         r['type'], r['response'], r['response_text'], r['correct']])</code></pre></div>
+<div class="code"><pre><code>python3 quiz_report.py telnetlab &gt; telnetlab_quiz.csv</code></pre></div>
+
+<h2 id="en-server">Multi-user server</h2>
+<p>The multi-user Labtainer patch already includes the quiz module, so <code>install.sh</code> is not used there. <code>setup.sh</code> applies it to <code>/home/student/labtainer</code>, and student copies are created from that directory.</p>
+<ul>
+<li>New users receive the module through <code>open.sh</code>. Existing users receive it when <code>setup.sh</code> runs again.</li>
+<li>Each student has a private Labtainer copy, so new <code>.quiz</code> files must go into existing students' copies as well as <code>/home/student/labtainer</code>.</li>
+<li>The commands are the same. Each student sees only their own lab, and answers stay separate.</li>
+</ul>
+
+<h2 id="en-errors">Error messages</h2>
+<div class="table"><table>
+<tr><th>Message</th><th>Cause</th><th>Fix</th></tr>
+<tr><td><code>The lab has no quizzes</code></td><td>The lab has no <code>.quiz</code> file, the lab name is wrong, or you are in the wrong directory</td><td>Go to <code>labtainer-student</code> and check the name</td></tr>
+<tr><td><code>No labs are currently running...</code></td><td>No lab is running</td><td>Use <code>quiz -l &lt;lab&gt;</code></td></tr>
+<tr><td><code>multiple labs running...</code></td><td>More than one lab is open</td><td>Use <code>quiz -l &lt;lab&gt;</code></td></tr>
+<tr><td><code>Multiple quizzes for this lab...</code></td><td>The lab has more than one quiz</td><td>Select one with <code>-q</code></td></tr>
+<tr><td><code>Given quiz ... not one of the quizzes</code></td><td>The <code>-q</code> name is wrong</td><td>Use a name from the message</td></tr>
+<tr><td><code>Not enough elements in this question</code></td><td>A field is missing, or a multi-line question has a blank line</td><td>Count the fields and add <code>""</code></td></tr>
+<tr><td><code>Answer X of question N is not one of its options</code></td><td>The answer letter is not among the options</td><td>Fix the letter or the options</td></tr>
+<tr><td><code>Unknown question type ...</code></td><td>The type is misspelled, and the question is skipped</td><td>Fix the type name</td></tr>
+<tr><td><code>bad line?</code></td><td>A blank or broken line</td><td>Remove the line</td></tr>
+<tr><td>A question is never asked</td><td>The <code>""</code> prerequisite is missing in a multiple choice question, or the prerequisite question was answered correctly</td><td>Check the fields</td></tr>
+<tr><td>Answers are not in the <code>.lab</code> file</td><td>An update removed the module, or the quiz was taken after <code>stoplab</code></td><td>Run <code>./install.sh</code>, then start and stop the lab</td></tr>
+</table></div>
+
+<h2 id="en-limits">Limitations</h2>
+<ul>
+<li><strong>Not for exams.</strong> Correct answers are plain text in the <code>.quiz</code> file, and students can read them. Students can also edit their saved answers before <code>stoplab</code>.</li>
+<li><strong>No grade display.</strong> <code>gradelab</code> does not show quiz results or add them to a grade.</li>
+<li><strong>One answer.</strong> A multiple choice question cannot have more than one correct option.</li>
+<li><strong>Fixed order.</strong> Questions and options are not shuffled or varied per student.</li>
+<li><strong>Quizzes are optional.</strong> Starting or stopping a lab does not check whether a quiz was taken.</li>
+</ul>
+</main>
+</div>
+
+<script>
+(function () {
+  var labels = { tr: ['Kopyala', 'Kopyalandı'], en: ['Copy', 'Copied'] };
+  var current = 'tr';
+  function setLang(lang, keepScroll) {
+    current = lang;
+    document.getElementById('lang-tr').hidden = lang !== 'tr';
+    document.getElementById('lang-en').hidden = lang !== 'en';
+    document.getElementById('btn-tr').setAttribute('aria-pressed', String(lang === 'tr'));
+    document.getElementById('btn-en').setAttribute('aria-pressed', String(lang === 'en'));
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.copy').forEach(function (b) { b.textContent = labels[lang][0]; });
+    try { localStorage.setItem('quiz-guide-lang', lang); } catch (e) {}
+    if (!keepScroll) window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('.code').forEach(function (box) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'copy'; b.textContent = labels.tr[0];
+    b.addEventListener('click', function () {
+      var text = box.querySelector('code').textContent;
+      function done() { b.textContent = labels[current][1]; setTimeout(function () { b.textContent = labels[current][0]; }, 1400); }
+      function fallback() { var r = document.createRange(); r.selectNodeContents(box.querySelector('code')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    });
+    box.appendChild(b);
+  });
+  document.querySelectorAll('.langs button').forEach(function (b) {
+    b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
+  });
+  var hash = location.hash.slice(1), saved = null;
+  try { saved = localStorage.getItem('quiz-guide-lang'); } catch (e) {}
+  if (hash.indexOf('en') === 0) { setLang('en', true); }
+  else if (hash.indexOf('tr') === 0) { setLang('tr', true); }
+  else if (saved === 'en') { setLang('en', true); }
+  else { setLang('tr', true); }
+  if (hash) { var t = document.getElementById(hash); if (t) t.scrollIntoView(); }
+})();
+</script>
